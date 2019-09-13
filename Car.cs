@@ -30,9 +30,11 @@ namespace CarDelegate
         private CarEngineHandler listOfHandlers;
 
         // 3) Add registration function for the caller.
+        // Now with multicasting support!
+        // Note we are using the += operator, not the assignment operator (=).
         public void RegisterWithCarEngine(CarEngineHandler methodToCall)
         {
-            listOfHandlers = methodToCall;
+            listOfHandlers += methodToCall;
         }
 
         // 4) Implement the Accelerate() method to invoke the delegate's invocation list under the correct circumstances.
@@ -41,8 +43,7 @@ namespace CarDelegate
             // If the car is "dead", send dead message.
             if (carIsDead)
             {
-                if (listOfHandlers != null)
-                    listOfHandlers("Sorry, this car is dead...");
+                listOfHandlers?.Invoke("Sorry, this car is dead...");
             }
             else
             {
@@ -58,6 +59,11 @@ namespace CarDelegate
                 else
                     Console.WriteLine("CurrentSpeed = {0}", CurrentSpeed);
             }
+        }
+
+        public void UnRegisterWithCarEngine(CarEngineHandler methodToCall)
+        {
+            listOfHandlers -= methodToCall;
         }
     }
 }
